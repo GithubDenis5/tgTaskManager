@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  bot_service:
+    build: 
+      context: .
+      dockerfile: docker/bot_service.Dockerfile
+    container_name: bot_service
+    env_file:
+      - app/bot_service/.env
+    volumes:
+      - .:/app
+    # depends_on:
+    #   - mongo
+    #   - rabbitmq
+    restart: always
+
+  # task_scheduler_service:
+  #   build: 
+  #     context: .
+  #     dockerfile: docker/task_scheduler_service.Dockerfile
+  #   container_name: task_scheduler_service
+  #   volumes:
+  #     - .:/app
+  #   depends_on:
+  #     - mongo
+  #     - rabbitmq
+  #   restart: always
+
+  # notification_service:
+  #   build: 
+  #     context: .
+  #     dockerfile: docker/notification_service.Dockerfile
+  #   container_name: notification_service
+  #   volumes:
+  #     - .:/app
+  #   depends_on:
+  #     - mongo
+  #     - rabbitmq
+  #   restart: always
+
+#   mongo:
+#     image: mongo
+#     container_name: mongo_db
+#     restart: always
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongo_data:/data/db
+
+#   rabbitmq:
+#     image: rabbitmq:3-management
+#     container_name: rabbitmq
+#     restart: always
+#     ports:
+#       - "5672:5672"
+#       - "15672:15672"
+#     environment:
+#       RABBITMQ_DEFAULT_USER: guest
+#       RABBITMQ_DEFAULT_PASS: guest
+
+# volumes:
+#   mongo_data:
