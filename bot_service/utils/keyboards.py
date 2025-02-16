@@ -53,7 +53,7 @@ async def tasks_list_keyboard(cur_page: int, tg_id: int):
         keyboard.row(
             InlineKeyboardButton(
                 text=tasks_list[i]["name"],
-                callback_data=f"task_{tasks_list[i]["task_id"]}_{cur_page}",
+                callback_data=f'task_{tasks_list[i]["task_id"]}_{cur_page}',
             )
         )
 

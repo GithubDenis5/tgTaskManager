@@ -2,18 +2,19 @@ version: "3.8"
 
 services:
   bot_service:
-    build: 
+    build:
       context: .
       dockerfile: docker/bot_service.Dockerfile
     container_name: bot_service
     env_file:
-      - app/bot_service/.env
+      - bot_service/.env
     volumes:
-      - .:/app
+      - .:/bot_service
     # depends_on:
     #   - mongo
     #   - rabbitmq
-    restart: always
+    restart: no
+
 
   # task_scheduler_service:
   #   build: 

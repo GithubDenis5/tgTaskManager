@@ -1,17 +1,18 @@
-# Используем Python 3.11
-FROM python:3.11
+FROM python:3.11-slim
 
-# Устанавливаем рабочую директорию
-WORKDIR /app
+WORKDIR /bot_service
 
-# Копируем файлы проекта
-COPY app/bot_service /app
+# Copy pyproject.toml and poetry.lock for dependency installation
+COPY pyproject.toml poetry.lock* ./
 
-# Устанавливаем Poetry
-RUN pip install poetry
+# Install Poetry and dependencies
+RUN python -m pip install --no-cache-dir poetry==1.8.3 \
+    && poetry config virtualenvs.create false \
+    && poetry install --no-dev --no-interaction --no-ansi \
+    && rm -rf $(poetry config cache-dir)/{cache,artifacts}
 
-# Устанавливаем зависимости
-RUN poetry install --no-root
+# Copy the rest of the application code
+COPY . .
 
-# Запускаем бота
-CMD ["poetry", "run", "python", "-m", "bot_service"]
+# Set the entrypoint for the bot
+ENTRYPOINT ["python3", "-u", "-B", "-m", "bot_service"]
