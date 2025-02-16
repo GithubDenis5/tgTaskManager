@@ -1,5 +1,5 @@
-from utils import keyboards
-from logger import setup_logger
+from bot_service.utils import keyboards
+from bot_service.logger import setup_logger
 from aiogram import F, Router
 from aiogram.filters import StateFilter
 from aiogram.filters import Command, CommandStart
@@ -12,10 +12,10 @@ from aiogram.types import (
     ReplyKeyboardRemove,
     TelegramObject,
 )
-from config import messages, labels, states
+from bot_service.config import messages, labels, states
 
-from services import task_service
-from utils import formaters
+from bot_service.services import task_service
+from bot_service.utils import formaters
 
 logger = setup_logger(__name__)
 
@@ -143,3 +143,13 @@ async def confirm_task_adding(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         text=messages.TASK_ADDED, reply_markup=keyboards.alltime_reply_keyboard
     )
+
+
+@user.callback_query(F.data == "edit_tasks_status")
+async def tasks_keyboard(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await callback.answer()
+
+    kb = await keyboards.tasks_list_keyboard(1, callback.from_user.id)
+
+    await callback.message.answer(text=messages.CHOOSE_TASK, reply_markup=kb)

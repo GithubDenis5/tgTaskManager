@@ -1,11 +1,11 @@
 import asyncio
 import os
-from handler import user
+from bot_service.handler import user
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
-from middlewares.logging import LoggingMiddleware
+from bot_service.middlewares.logging import LoggingMiddleware
 
-from logger import setup_logger
+from bot_service.logger import setup_logger
 
 logger = setup_logger(__name__)
 

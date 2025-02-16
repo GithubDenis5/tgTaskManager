@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict
 from aiogram import BaseMiddleware
 from aiogram.types import CallbackQuery, Message, TelegramObject
 
-from logger import setup_logger
+from bot_service.logger import setup_logger
 
 logger = setup_logger(__name__)
 

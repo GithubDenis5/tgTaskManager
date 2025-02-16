@@ -5,10 +5,11 @@
             "name": "Python Debugger: Bot_service",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/app/bot_service/__main__.py",
-            "cwd": "${workspaceFolder}/app/bot_service",
-            "envFile": "${workspaceFolder}/app/bot_service/.env",
-            "console": "integratedTerminal"
+            //"program": "${workspaceFolder}/app/bot_service/__main__.py",
+            //"cwd": "${workspaceFolder}/app/bot_service",
+            "envFile": "${workspaceFolder}/bot_service/.env",
+            "module": "bot_service"
+            //"console": "integratedTerminal"
         }
     ]
 }

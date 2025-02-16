@@ -13,3 +13,5 @@ ENTER_NOTIFICATION_DATE = "Введите дату напоминания"
 ENTER_NOTIFICATION_TIME = "Введите время напоминания"
 CONFIRM_TASK_ADDING = "Добавить задачу?\n"
 TASK_ADDED = "Задача добавлена в ваш списов задач"
+
+CHOOSE_TASK = "Выберите задачу для просмотра/редактирования"

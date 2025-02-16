@@ -1,4 +1,4 @@
-from config import messages
+from bot_service.config import messages
 from datetime import datetime
 
 
@@ -14,7 +14,7 @@ async def format_tasks_list(tasks: list):
 
     return "".join(
         messages.TASK_FOR_LIST_FORMATER.format(
-            task["task"],
+            task["name"],
             format_datetime(task["deadline"]),
         )
         for task in tasks
