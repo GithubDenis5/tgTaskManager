@@ -32,6 +32,17 @@ async def cmd_start(message: Message, state: FSMContext):
     )
 
 
+@user.callback_query(F.data == "denie")
+async def denie_action(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+
+    await callback.message.edit_reply_markup(reply_markup=None)
+
+    await callback.message.answer(text=messages.ACTION_DENIED)
+
+    await state.clear()
+
+
 @user.message(F.text == labels.TASK_LIST)
 async def show_task_list_message(message: Message, state: FSMContext):
     logger.debug(f"user {message.from_user.id} ask tasks list")
@@ -100,10 +111,35 @@ async def task_adding_show_fields(message: Message, state: FSMContext):
     notification_date = data["notification_date"]
     notification_time = data["notification_time"]
 
-    task_service.add_task(data)
-
     text = messages.CONFIRM_TASK_ADDING + messages.TASK_FORMATER.format(
         name, description, deadline_date, deadline_time, notification_date, notification_time
     )
 
     await message.answer(text=text, reply_markup=keyboards.confirm_task_adding)
+
+
+@user.callback_query(F.data == "add_task")
+async def confirm_task_adding(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+
+    data = await state.get_data()
+    # name = data["name"]
+    # description = data["description"]
+    # deadline_date = data["deadline_date"]
+    # deadline_time = data["deadline_time"]
+    # notification_date = data["notification_date"]
+    # notification_time = data["notification_time"]
+
+    await state.clear()
+
+    await callback.message.edit_reply_markup(reply_markup=None)
+
+    try:
+        await task_service.add_task(data)
+    except Exception as ex:
+        logger.error(f"{callback.from_user.id} could not add task: {ex}")
+        return
+
+    await callback.message.answer(
+        text=messages.TASK_ADDED, reply_markup=keyboards.alltime_reply_keyboard
+    )
