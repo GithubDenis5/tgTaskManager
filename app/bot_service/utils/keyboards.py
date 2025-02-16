@@ -16,3 +16,12 @@ under_tasks_list_keyboard = InlineKeyboardMarkup(
         [InlineKeyboardButton(text=labels.EDIT_TASK_STATUS, callback_data="edit_tasks_status")]
     ]
 )
+
+confirm_task_adding = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text=labels.YES, callback_data="add_task"),
+            InlineKeyboardButton(text=labels.NO, callback_data="denie"),
+        ],
+    ]
+)
