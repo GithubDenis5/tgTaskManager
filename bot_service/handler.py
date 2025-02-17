@@ -147,7 +147,9 @@ async def confirm_task_adding(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_reply_markup(reply_markup=None)
 
     try:
-        await task_service.add_task(name, description, deadline, notification)
+        await task_service.add_task(
+            callback.from_user.id, name, description, deadline, notification
+        )
     except Exception as ex:
         logger.error(f"{callback.from_user.id} could not add task: {ex}")
         return
