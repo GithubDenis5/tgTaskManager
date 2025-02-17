@@ -19,3 +19,14 @@ async def format_tasks_list(tasks: list):
         )
         for task in tasks
     ).strip()
+
+
+async def format_task_info(task):
+    return "".join(
+        messages.TASK_INFO_FORMATER.format(
+            task["name"],
+            task["description"],
+            format_datetime(task["deadline"]),
+            format_datetime(task["notification"]),
+        )
+    ).strip()

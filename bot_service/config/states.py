@@ -8,3 +8,10 @@ class AddTask(StatesGroup):
     deadline_time = State()
     notification_date = State()
     notification_time = State()
+
+
+class Prolong(StatesGroup):
+    deadline_date = State()
+    deadline_time = State()
+    notification_date = State()
+    notification_time = State()

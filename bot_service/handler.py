@@ -145,11 +145,110 @@ async def confirm_task_adding(callback: CallbackQuery, state: FSMContext):
     )
 
 
-@user.callback_query(F.data == "edit_tasks_status")
+@user.callback_query(F.data.startswith("page_task_"))
 async def tasks_keyboard(callback: CallbackQuery, state: FSMContext):
+
+    cur_page = int(callback.data.split("_")[-1])
+
     await state.clear()
     await callback.answer()
 
-    kb = await keyboards.tasks_list_keyboard(1, callback.from_user.id)
+    kb = await keyboards.tasks_list_keyboard(cur_page, callback.from_user.id)
 
-    await callback.message.answer(text=messages.CHOOSE_TASK, reply_markup=kb)
+    await callback.message.edit_text(text=messages.CHOOSE_TASK, reply_markup=kb)
+
+
+@user.callback_query(F.data.startswith("task_"))
+async def show_task_info(callback: CallbackQuery, state: FSMContext):
+    _, task_id, cur_page = callback.data.split("_")
+    logger.debug(f"ask task with id:{task_id}")
+
+    await callback.answer()
+
+    task_info = await task_service.get_task(callback.from_user.id, task_id)
+
+    logger.debug(f"before - {task_info}")
+
+    text = await formaters.format_task_info(task_info)
+
+    logger.debug(text)
+
+    kb = await keyboards.task_info_keyboard(task_id=task_id, back_page=cur_page)
+
+    await callback.message.edit_text(text=text, reply_markup=kb)
+
+
+@user.callback_query(F.data.startswith("edit_task_"))
+async def edit_task_confirm(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+
+    _, _, field, task_id, back_page = callback.data.split("_")
+
+    if field != "prolong":
+        kb = await keyboards.task_edit_confirm(task_id=task_id, field=field, back_page=back_page)
+        await callback.message.edit_text(text=messages.ACTION_CONFIRM, reply_markup=kb)
+        return
+    else:
+        await callback.message.edit_text(text=messages.ENTER_NEW_DEADLINE_DATE, reply_markup=None)
+        await state.clear()
+        await state.set_state(states.Prolong.deadline_date)
+
+
+@user.message(states.Prolong.deadline_date)
+async def task_edit_deadline_time(message: Message, state: FSMContext):
+    await state.update_data(deadline_date=message.text)
+    await message.answer(text=messages.ENTER_NEW_DEADLINE_TIME)
+    await state.set_state(states.Prolong.deadline_time)
+
+
+@user.message(states.Prolong.deadline_time)
+async def task_edit_notification_date(message: Message, state: FSMContext):
+    await state.update_data(deadline_time=message.text)
+    await message.answer(text=messages.ENTER_NEW_NOTIFICATION_DATE)
+    await state.set_state(states.Prolong.notification_date)
+
+
+@user.message(states.Prolong.notification_date)
+async def task_edit_notification_time(message: Message, state: FSMContext):
+    await state.update_data(notification_date=message.text)
+    await message.answer(text=messages.ENTER_NEW_NOTIFICATION_TIME)
+    await state.set_state(states.Prolong.notification_time)
+
+
+@user.message(states.Prolong.notification_time)
+async def task_edit_show_fields(message: Message, state: FSMContext):
+    await state.update_data(notification_time=message.text)
+
+    data = await state.get_data()
+
+
+@user.callback_query(F.data.startswith("confirm_edit_task_"))
+async def confirm_task_edit(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+
+    _, _, _, field, task_id = callback.data.split("_")
+
+    logger.debug(f"confirm - {field}")
+
+    deadline = None
+    notification = None
+    data = await state.get_data()
+
+    if field == "prolong":
+        deadline = data["deadline"]
+        notification = data["notification"]
+
+    try:
+        await task_service.edit_task(callback.from_user.id, task_id, field, deadline, notification)
+        await callback.message.edit_text(text=messages.TASK_UPDATED, reply_markup=None)
+        logger.debug(f"user {callback.from_user.id} ask tasks list")
+        await state.clear()
+
+        tasks = await task_service.get_tasks(callback.from_user.id)
+
+        text = await formaters.format_tasks_list(tasks)
+
+        await callback.message.answer(text=text, reply_markup=keyboards.under_tasks_list_keyboard)
+    except Exception as ex:
+        logger.error(f"{callback.from_user.id} could not edit task({task_id}): {ex}")
+        return

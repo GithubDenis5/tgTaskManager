@@ -7,3 +7,7 @@ NO = "Нет"
 BACK = "←"
 FORWARD = "→"
 RETURN = "Вернуться↩️"
+
+COMPLETE = "Выполнено"
+DELETE = "Удалить"
+PROLONG = "Продлить"

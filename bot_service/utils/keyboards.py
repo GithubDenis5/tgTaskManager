@@ -21,7 +21,7 @@ alltime_reply_keyboard = ReplyKeyboardMarkup(
 
 under_tasks_list_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text=labels.EDIT_TASK_STATUS, callback_data="edit_tasks_status")]
+        [InlineKeyboardButton(text=labels.EDIT_TASK_STATUS, callback_data="page_task_1")]
     ]
 )
 
@@ -70,5 +70,44 @@ async def tasks_list_keyboard(cur_page: int, tg_id: int):
     )
 
     keyboard.row(InlineKeyboardButton(text=labels.RETURN, callback_data="show_tasks_list_message"))
+
+    return keyboard.as_markup()
+
+
+async def task_info_keyboard(task_id: int, back_page: int):
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.row(
+        InlineKeyboardButton(
+            text=labels.COMPLETE, callback_data=f"edit_task_complete_{task_id}_{back_page}"
+        )
+    )
+
+    keyboard.row(
+        InlineKeyboardButton(
+            text=labels.PROLONG, callback_data=f"edit_task_prolong_{task_id}_{back_page}"
+        )
+    )
+
+    keyboard.row(
+        InlineKeyboardButton(
+            text=labels.DELETE, callback_data=f"edit_task_delete_{task_id}_{back_page}"
+        )
+    )
+
+    keyboard.row(InlineKeyboardButton(text=labels.RETURN, callback_data=f"page_task_{back_page}"))
+
+    return keyboard.as_markup()
+
+
+async def task_edit_confirm(task_id: int, field: str, back_page: int):
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.row(
+        InlineKeyboardButton(
+            text=labels.YES, callback_data=f"confirm_edit_task_{field}_{task_id}"
+        ),
+        InlineKeyboardButton(text=labels.NO, callback_data=f"task_{task_id}_{back_page}"),
+    )
 
     return keyboard.as_markup()
