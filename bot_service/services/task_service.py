@@ -5,20 +5,20 @@ async def get_tasks(tg_id: int):
             "name": "Отчет",
             "description": "Сделать отчет",
             "deadline": "2025-02-20T18:00:00",
-            "reminder": "2025-02-19T10:00:00",
+            "notification": "2025-02-19T10:00:00",
         },
         {
             "task_id": "xyz789",
             "name": "Презентация",
             "description": "Подготовить презентацию",
             "deadline": "2025-02-22T15:00:00",
-            "reminder": "2025-02-21T09:00:00",
+            "notification": "2025-02-21T09:00:00",
         },
     ]
     return result
 
 
-async def add_task(smth):
+async def add_task(name: str, description: str, deadline: str, notification: str):
     pass
 
 

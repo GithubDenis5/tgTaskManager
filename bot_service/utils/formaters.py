@@ -21,6 +21,11 @@ async def format_tasks_list(tasks: list):
     ).strip()
 
 
+def convert_datetime(date_str: str, time_str: str) -> str:
+    dt = datetime.strptime(f"{date_str} {time_str}", "%d.%m.%Y %H:%M")
+    return dt.strftime("%Y-%m-%dT%H:%M:%S")
+
+
 async def format_task_info(task):
     return "".join(
         messages.TASK_INFO_FORMATER.format(

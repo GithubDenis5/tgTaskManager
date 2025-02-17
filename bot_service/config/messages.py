@@ -4,7 +4,7 @@ ACTION_DENIED = "Действие отменено"
 ACTION_CONFIRM = "Подтвердить действие?"
 
 TASK_FOR_LIST_FORMATER = "<b>{}</b> | <i>{}</i>\n\n"
-TASK_INFO_FORMATER = "<b>{}</b>\n<i>{}</i>\nДедлайн: {}\nНапоминание:{}"
+TASK_INFO_FORMATER = "<b>{}</b>\n<i>{}</i>\nДедлайн: {}\nНапоминание: {}"
 
 ENTER_TASK_NAME = "Введите название задачи"
 ENTER_DESCRIPTION = "Введите описание задачи"
@@ -22,3 +22,9 @@ ENTER_NEW_DEADLINE_TIME = "Введите новое время дедлайна
 ENTER_NEW_NOTIFICATION_DATE = "Введите новую дату напоминания"
 ENTER_NEW_NOTIFICATION_TIME = "Введите новое время напоминания"
 TASK_UPDATED = "Задача обновлена"
+TASK_AFTER_EDIT = "Задача после обновления\n"
+NEW_TIME = "Дедлайн: {} {}\nНапоминание:{} {}"
+
+
+# ошибки
+DATETIME_FORMA_ERROR = "Некорректо введены ддата/время"

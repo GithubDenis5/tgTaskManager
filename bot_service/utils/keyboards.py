@@ -74,7 +74,7 @@ async def tasks_list_keyboard(cur_page: int, tg_id: int):
     return keyboard.as_markup()
 
 
-async def task_info_keyboard(task_id: int, back_page: int):
+async def task_info_keyboard(task_id: str, back_page: int):
     keyboard = InlineKeyboardBuilder()
 
     keyboard.row(
@@ -100,7 +100,7 @@ async def task_info_keyboard(task_id: int, back_page: int):
     return keyboard.as_markup()
 
 
-async def task_edit_confirm(task_id: int, field: str, back_page: int):
+async def task_edit_confirm(task_id: str, field: str, back_page: int):
     keyboard = InlineKeyboardBuilder()
 
     keyboard.row(

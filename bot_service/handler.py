@@ -111,7 +111,21 @@ async def task_adding_show_fields(message: Message, state: FSMContext):
     notification_date = data["notification_date"]
     notification_time = data["notification_time"]
 
-    text = messages.CONFIRM_TASK_ADDING + messages.TASK_FORMATER.format(
+    try:
+        await state.update_data(deadline=formaters.convert_datetime(deadline_date, deadline_time))
+        await state.update_data(
+            notification=formaters.convert_datetime(notification_date, notification_time)
+        )
+    except Exception:
+        await message.answer(text=messages.DATETIME_FORMA_ERROR)
+
+        await state.clear()
+        await message.answer(text=messages.ENTER_TASK_NAME)
+        await state.set_state(states.AddTask.name)
+
+        return
+
+    text = messages.CONFIRM_TASK_ADDING + messages.TASK_INFO_FORMATER.format(
         name, description, deadline_date, deadline_time, notification_date, notification_time
     )
 
@@ -123,19 +137,17 @@ async def confirm_task_adding(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
     data = await state.get_data()
-    # name = data["name"]
-    # description = data["description"]
-    # deadline_date = data["deadline_date"]
-    # deadline_time = data["deadline_time"]
-    # notification_date = data["notification_date"]
-    # notification_time = data["notification_time"]
+    name = data["name"]
+    description = data["description"]
+    deadline = data["deadline"]
+    notification = data["notification"]
 
     await state.clear()
 
     await callback.message.edit_reply_markup(reply_markup=None)
 
     try:
-        await task_service.add_task(data)
+        await task_service.add_task(name, description, deadline, notification)
     except Exception as ex:
         logger.error(f"{callback.from_user.id} could not add task: {ex}")
         return
@@ -191,6 +203,7 @@ async def edit_task_confirm(callback: CallbackQuery, state: FSMContext):
     else:
         await callback.message.edit_text(text=messages.ENTER_NEW_DEADLINE_DATE, reply_markup=None)
         await state.clear()
+        await state.update_data(task_id=task_id)
         await state.set_state(states.Prolong.deadline_date)
 
 
@@ -220,6 +233,34 @@ async def task_edit_show_fields(message: Message, state: FSMContext):
     await state.update_data(notification_time=message.text)
 
     data = await state.get_data()
+    task_id = data["task_id"]
+    deadline_date = data["deadline_date"]
+    deadline_time = data["deadline_time"]
+    notification_date = data["notification_date"]
+    notification_time = data["notification_time"]
+
+    try:
+        await state.update_data(deadline=formaters.convert_datetime(deadline_date, deadline_time))
+        await state.update_data(
+            notification=formaters.convert_datetime(notification_date, notification_time)
+        )
+    except Exception:
+        await message.answer(text=messages.DATETIME_FORMA_ERROR)
+
+        await message.answer(text=messages.ENTER_NEW_DEADLINE_DATE, reply_markup=None)
+        await state.clear()
+        await state.update_data(task_id=task_id)
+        await state.set_state(states.Prolong.deadline_date)
+
+        return
+
+    text = messages.TASK_AFTER_EDIT + messages.NEW_TIME.format(
+        deadline_date, deadline_time, notification_date, notification_time
+    )
+
+    await message.answer(text=text)
+    kb = await keyboards.task_edit_confirm(task_id=task_id, field="prolong", back_page=1)
+    await message.answer(text=messages.ACTION_CONFIRM, reply_markup=kb)
 
 
 @user.callback_query(F.data.startswith("confirm_edit_task_"))
@@ -233,6 +274,7 @@ async def confirm_task_edit(callback: CallbackQuery, state: FSMContext):
     deadline = None
     notification = None
     data = await state.get_data()
+    logger.debug(data)
 
     if field == "prolong":
         deadline = data["deadline"]
