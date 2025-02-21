@@ -28,6 +28,10 @@ def setup_logger(logger_name):
     # Aiogram
     logging.getLogger("aiogram").setLevel(logging.DEBUG)
 
+    logging.getLogger("aiormq").setLevel(logging.CRITICAL)
+
+    logging.getLogger("aio_pika").setLevel(logging.DEBUG)
+
     # Asyncio
     logging.getLogger("asyncio").setLevel(logging.DEBUG)
 

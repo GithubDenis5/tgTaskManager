@@ -5,11 +5,17 @@
             "name": "Python Debugger: Bot_service",
             "type": "debugpy",
             "request": "launch",
-            //"program": "${workspaceFolder}/app/bot_service/__main__.py",
-            //"cwd": "${workspaceFolder}/app/bot_service",
+            "module": "bot_service",
             "envFile": "${workspaceFolder}/bot_service/.env",
-            "module": "bot_service"
-            //"console": "integratedTerminal"
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python Debugger: Task_scheduler_service",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "task_scheduler_service",
+            "envFile": "${workspaceFolder}/task_scheduler_service/.env",
+            "console": "integratedTerminal"
         }
     ]
 }

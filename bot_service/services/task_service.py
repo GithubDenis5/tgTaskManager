@@ -1,3 +1,6 @@
+from bot_service.services.rabbitmq import rabbitmq
+
+
 async def get_tasks(tg_id: int):
     """Получить все задачи для user
 
@@ -36,6 +39,15 @@ async def add_task(tg_id: int, name: str, description: str, deadline: str, notif
         deadline (str): дата окончания
         notification (str): дата напоминания
     """
+
+    # Формируем сообщение
+    message = f"{tg_id}|{name}|{description}|{deadline}|{notification}"
+
+    # Отправляем сообщение и ждем ответ
+    response = await rabbitmq.send_message("task_queue", message)
+
+    print(response)
+
     pass
 
 
