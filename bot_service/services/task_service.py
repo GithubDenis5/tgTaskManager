@@ -1,4 +1,9 @@
 from bot_service.services.rabbitmq import rabbitmq
+from bot_service.services.utils import ADD_TASK_MQ, GET_TASK_BY_ID_MQ, EDIT_TASK_MQ
+
+from bot_service.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 
 async def get_tasks(tg_id: int):
@@ -26,6 +31,13 @@ async def get_tasks(tg_id: int):
             "notification": "2025-02-21T09:00:00",
         },
     ]
+
+    message = f"get_task|{tg_id}"
+
+    response = await rabbitmq.send_message("task_queue", message)
+
+    logger.debug(f"get_tasks answer: {response}")
+
     return result
 
 
@@ -41,12 +53,12 @@ async def add_task(tg_id: int, name: str, description: str, deadline: str, notif
     """
 
     # Формируем сообщение
-    message = f"{tg_id}|{name}|{description}|{deadline}|{notification}"
+    message = ADD_TASK_MQ.format(tg_id, name, description, deadline, notification)
 
     # Отправляем сообщение и ждем ответ
     response = await rabbitmq.send_message("task_queue", message)
 
-    print(response)
+    logger.debug(f"add_task answer: {response}")
 
     pass
 
@@ -82,6 +94,12 @@ async def get_task(tg_id: int, task_id: str):
     elif task_id == "xyz789":
         return result[1]
 
+    message = GET_TASK_BY_ID_MQ.format(tg_id, task_id)
+
+    response = await rabbitmq.send_message("task_queue", message)
+
+    logger.debug(f"get_tasks answer: {response}")
+
     return None
 
 
@@ -96,4 +114,11 @@ async def edit_task(tg_id, task_id, field, deadline, notification):
         deadline (_type_): новый дедлайн
         notification (_type_): новое уведомление
     """
+
+    message = EDIT_TASK_MQ.format(tg_id, task_id, field, deadline, notification)
+
+    response = await rabbitmq.send_message("task_queue", message)
+
+    logger.debug(f"edit_task field-{field} answer: {response}")
+
     pass
