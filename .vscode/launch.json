@@ -10,11 +10,11 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python Debugger: Task_scheduler_service",
+            "name": "Python Debugger: Task_service",
             "type": "debugpy",
             "request": "launch",
-            "module": "task_scheduler_service",
-            "envFile": "${workspaceFolder}/task_scheduler_service/.env",
+            "module": "task_service",
+            "envFile": "${workspaceFolder}/task_service/.env",
             "console": "integratedTerminal"
         }
     ]

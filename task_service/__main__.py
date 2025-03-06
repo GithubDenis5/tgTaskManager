@@ -1,6 +1,6 @@
 import asyncio
 import aio_pika
-from task_scheduler_service.processor.message_processor import process_message
+from task_service.processor.message_processor import process_message
 
 
 async def main():

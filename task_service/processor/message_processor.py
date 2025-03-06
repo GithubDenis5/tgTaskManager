@@ -1,8 +1,8 @@
 import asyncio
 import aio_pika
 
-from task_scheduler_service.logger import setup_logger
-import task_scheduler_service.processor.requests_processor as rp
+from task_service.logger import setup_logger
+import task_service.processor.requests_processor as rp
 
 logger = setup_logger(__name__)
 

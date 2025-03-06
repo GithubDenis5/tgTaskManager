@@ -1,4 +1,4 @@
-from task_scheduler_service.logger import setup_logger
+from task_service.logger import setup_logger
 
 logger = setup_logger(__name__)
 
