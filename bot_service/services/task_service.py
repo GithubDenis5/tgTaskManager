@@ -3,7 +3,14 @@ from bot_service.services.utils import ADD_TASK_MQ, GET_TASK_BY_ID_MQ, EDIT_TASK
 
 from bot_service.logger import setup_logger
 
+import json
+
 logger = setup_logger(__name__)
+
+
+async def parse_tasks_to_list(input_str):
+    fixed_str = input_str.replace("'", '"')
+    return json.loads(fixed_str)
 
 
 async def get_tasks(tg_id: int):
@@ -15,30 +22,14 @@ async def get_tasks(tg_id: int):
     Returns:
         _type_: задачи из бд
     """
-    result = [
-        {
-            "task_id": "abc123",
-            "name": "Отчет",
-            "description": "Сделать отчет",
-            "deadline": "2025-02-20T18:00:00",
-            "notification": "2025-02-19T10:00:00",
-        },
-        {
-            "task_id": "xyz789",
-            "name": "Презентация",
-            "description": "Подготовить презентацию",
-            "deadline": "2025-02-22T15:00:00",
-            "notification": "2025-02-21T09:00:00",
-        },
-    ]
 
-    message = f"get_task|{tg_id}"
+    message = f"get_tasks|{tg_id}"
 
-    response = await rabbitmq.send_message("task_queue", message)
+    response = await parse_tasks_to_list(await rabbitmq.send_message("task_queue", message))
 
     logger.debug(f"get_tasks answer: {response}")
 
-    return result
+    return response
 
 
 async def add_task(tg_id: int, name: str, description: str, deadline: str, notification: str):
@@ -73,34 +64,14 @@ async def get_task(tg_id: int, task_id: str):
     Returns:
         _type_: вернуть задачу из бд
     """
-    result = [
-        {
-            "task_id": "abc123",
-            "name": "Отчет",
-            "description": "Сделать отчет",
-            "deadline": "2025-02-20T18:00:00",
-            "notification": "2025-02-19T10:00:00",
-        },
-        {
-            "task_id": "xyz789",
-            "name": "Презентация",
-            "description": "Подготовить презентацию",
-            "deadline": "2025-02-22T15:00:00",
-            "notification": "2025-02-21T09:00:00",
-        },
-    ]
-    if task_id == "abc123":
-        return result[0]
-    elif task_id == "xyz789":
-        return result[1]
 
     message = GET_TASK_BY_ID_MQ.format(tg_id, task_id)
 
-    response = await rabbitmq.send_message("task_queue", message)
+    response = await parse_tasks_to_list(await rabbitmq.send_message("task_queue", message))
 
     logger.debug(f"get_tasks answer: {response}")
 
-    return None
+    return response
 
 
 async def edit_task(tg_id, task_id, field, deadline, notification):

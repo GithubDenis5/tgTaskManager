@@ -25,8 +25,8 @@ def setup_logger(logger_name):
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.DEBUG)
 
-    # Aiogram
-    logging.getLogger("aiogram").setLevel(logging.DEBUG)
+    # # Aiogram
+    # logging.getLogger("aiogram").setLevel(logging.DEBUG)
 
     logging.getLogger("aiormq").setLevel(logging.CRITICAL)
 
