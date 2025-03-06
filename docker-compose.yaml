@@ -10,10 +10,58 @@ services:
       - bot_service/.env
     volumes:
       - .:/bot_service
-    # depends_on:
-    #   - mongo
-    #   - rabbitmq
-    restart: no
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # Для соединения с RabbitMQ
+      - "15672:15672"   # Для веб-интерфейса управления
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_DEFAULT_VHOST: /task_vhost
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+
+  task_service:
+    build:
+      context: .
+      dockerfile: docker/task_service.Dockerfile
+    container_name: task_service
+    env_file:
+      - task_service/.env
+    volumes:
+      - .:/task_service
+    depends_on:
+      rabbitmq:
+        condition: service_started  # Ждем пока RabbitMQ начнет запускаться
+    command: bash -c "sleep 5 && exec python3 -u -B -m task_service"  # Задержка 5 секунд
+    restart: always
+
+volumes:
+  rabbitmq_data:
+
+
+
+# version: "3.8"
+
+# services:
+#   bot_service:
+#     build:
+#       context: .
+#       dockerfile: docker/bot_service.Dockerfile
+#     container_name: bot_service
+#     env_file:
+#       - bot_service/.env
+#     volumes:
+#       - .:/bot_service
+#     # depends_on:
+#     #   - mongo
+#     #   - rabbitmq
+#     restart: no
 
 
   # task_scheduler_service:
