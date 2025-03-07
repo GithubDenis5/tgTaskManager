@@ -13,6 +13,19 @@ async def parse_tasks_to_list(input_str):
     return json.loads(fixed_str)
 
 
+async def add_user(tg_id: int):
+    """Add new use
+
+    Args:
+        tg_id (int): user tg id
+    """
+    message = f"add_user|{tg_id}"
+
+    response = await rabbitmq.send_message("task_queue", message)
+
+    return response
+
+
 async def get_tasks(tg_id: int):
     """Получить все задачи для user
 
@@ -20,7 +33,7 @@ async def get_tasks(tg_id: int):
         tg_id (int): telegram id
 
     Returns:
-        _type_: задачи из бд
+        Dict: задачи из бд
     """
 
     message = f"get_tasks|{tg_id}"

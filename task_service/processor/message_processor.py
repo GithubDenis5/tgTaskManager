@@ -34,6 +34,8 @@ async def process_request(request: str):
             return await rp.edit_task_by_task_id(tg_id, task_id, field, deadline, notification)
         case "get_tasks":
             return await rp.get_tasks_by_id(tg_id)
+        case "add_user":
+            return await rp.add_user(tg_id)
 
     return f"Шаблонный ответ на: {request}"
 

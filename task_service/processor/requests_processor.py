@@ -61,3 +61,8 @@ async def edit_task_by_task_id(tg_id, task_id, field, deadline, notification):
     # усли нет ошибки, то возвращаем 0, иначе 1
 
     return "0"
+
+
+async def add_user(tg_id: int):
+
+    return "0"

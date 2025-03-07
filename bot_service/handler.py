@@ -27,6 +27,8 @@ async def cmd_start(message: Message, state: FSMContext):
     logger.info(f"cmd_start (from_user={message.from_user.id})")
     await state.clear()
 
+    await task_service.add_user(message.from_user.id)
+
     await message.answer(
         text=messages.START_MESSAGE, reply_markup=keyboards.alltime_reply_keyboard
     )
