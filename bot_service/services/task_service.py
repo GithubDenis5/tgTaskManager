@@ -9,8 +9,13 @@ logger = setup_logger(__name__)
 
 
 async def parse_tasks_to_list(input_str):
-    fixed_str = input_str.replace("'", '"')
-    return json.loads(fixed_str)
+    try:
+        # Попробуйте распарсить как JSON без изменений
+        return json.loads(input_str)
+    except json.JSONDecodeError:
+        # Если не получается, попробуйте заменить кавычки
+        fixed_str = input_str.replace("'", '"')
+        return json.loads(fixed_str)
 
 
 async def add_user(tg_id: int):

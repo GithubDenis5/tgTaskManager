@@ -25,14 +25,13 @@ def setup_logger(logger_name):
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.DEBUG)
 
-    # # Aiogram
-    # logging.getLogger("aiogram").setLevel(logging.DEBUG)
-
     logging.getLogger("aiormq").setLevel(logging.CRITICAL)
 
     logging.getLogger("aio_pika").setLevel(logging.ERROR)
 
     # Asyncio
     logging.getLogger("asyncio").setLevel(logging.DEBUG)
+
+    logging.getLogger("pymongo").setLevel(logging.ERROR)
 
     return logger
