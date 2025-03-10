@@ -31,18 +31,20 @@ async def init_db():
 
 async def get_tasks_by_id(tg_id: str):
     try:
-        tasks = await tasks_collection.find({"tg_id": tg_id}, {"_id": 0, "created_at": 0}).to_list(
-            length=None
-        )
+        # Добавляем фильтр по is_completed
+        tasks = await tasks_collection.find(
+            {"tg_id": tg_id, "is_completed": {"$ne": True}},  # Только невыполненные
+            {"_id": 0, "created_at": 0},
+        ).to_list(length=None)
 
-        # Конвертируем даты в строки
         for task in tasks:
+            # Конвертация дат, как раньше
             task["deadline"] = task["deadline"].isoformat()
             task["notification"] = task["notification"].isoformat()
 
-        return tasks  # Возвращаем список словарей с строковыми значениями
+        return tasks
     except Exception as e:
-        logger.error(f"Ошибка получения задач: {e}")
+        logger.error(f"Ошибка: {e}")
         return []
 
 
@@ -103,24 +105,53 @@ async def get_task_by_task_id(tg_id: str, task_id: str):
 
 
 async def edit_task_by_task_id(
-    tg_id: str, task_id: str, command: str, new_deadline: str, new_notification: str
+    tg_id: str, task_id: str, field: str, new_deadline: str, new_notification: str
 ) -> str:
     try:
-        deadline_dt = datetime.fromisoformat(new_deadline)
-        notify_dt = datetime.fromisoformat(new_notification)
+        match field:
+            case "prolong":
+                deadline_dt = datetime.fromisoformat(new_deadline)
+                notify_dt = datetime.fromisoformat(new_notification)
 
-        result = await tasks_collection.update_one(
-            {"tg_id": tg_id, "task_id": task_id},
-            {
-                "$set": {
-                    "deadline": deadline_dt,
-                    "notification": notify_dt,
-                    "updated_at": datetime.isoformat(),
-                }
-            },
-        )
+                result = await tasks_collection.update_one(
+                    {"tg_id": tg_id, "task_id": task_id},
+                    {
+                        "$set": {
+                            "deadline": deadline_dt,
+                            "notification": notify_dt,
+                            "updated_at": datetime.utcnow().isoformat(),
+                        }
+                    },
+                )
+                return "0" if result.modified_count else "1"
 
-        return "0" if result.modified_count else "1"
+            case "complete":
+                # Помечаем задачу как завершенную
+                result = await tasks_collection.update_one(
+                    {"tg_id": tg_id, "task_id": task_id},
+                    {
+                        "$set": {
+                            "is_completed": True,
+                            "completed_at": datetime.utcnow().isoformat(),
+                        }
+                    },
+                )
+                return "0" if result.modified_count else "1"
+
+            case "delete":
+                # Удаляем задачу
+                result = await tasks_collection.delete_one({"tg_id": tg_id, "task_id": task_id})
+                return "0" if result.deleted_count else "1"
+
+            case _:
+                # Несуществующее действие
+                logger.warning(f"Unknown field: {field}")
+                return "1"
+
+    except Exception as e:
+        logger.error(f"Ошибка редактирования задачи: {str(e)}")
+        return "1"
+
     except Exception as e:
         logger.error(f"Ошибка редактирования: {e}")
         return "1"
