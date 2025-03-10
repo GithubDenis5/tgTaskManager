@@ -2,6 +2,9 @@ import asyncio
 import aio_pika
 from task_service.processor.message_processor import process_message
 from task_service.processor.requests_processor import init_db
+from task_service.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 
 async def main():
@@ -17,4 +20,10 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        logger.info("Start Task_Service_App")
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("Interrupted")
+    except Exception as ex:
+        logger.critical(ex)
