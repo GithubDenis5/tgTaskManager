@@ -1,6 +1,7 @@
 import asyncio
 import aio_pika
 import uuid
+import os
 
 
 class RabbitMQ:
@@ -45,4 +46,4 @@ class RabbitMQ:
 
 
 # Глобальный клиент RabbitMQ
-rabbitmq = RabbitMQ("amqp://localhost/")
+rabbitmq = RabbitMQ(os.getenv("RABBITMQ_URL"))

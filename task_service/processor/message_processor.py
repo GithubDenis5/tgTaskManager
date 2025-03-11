@@ -1,4 +1,5 @@
 import asyncio
+import os
 import aio_pika
 
 from task_service.logger import setup_logger
@@ -48,7 +49,8 @@ async def process_message(message: aio_pika.IncomingMessage):
         response = str(await process_request(request))
 
         # Отправляем ответ в `reply_to` с `correlation_id`
-        connection = await aio_pika.connect_robust("amqp://localhost/")
+        # connection = await aio_pika.connect_robust("amqp://localhost/")
+        connection = await aio_pika.connect_robust(os.getenv("RABBITMQ_URL"))
         async with connection:
             channel = await connection.channel()
             await channel.default_exchange.publish(
