@@ -298,3 +298,8 @@ async def confirm_task_edit(callback: CallbackQuery, state: FSMContext):
     except Exception as ex:
         logger.error(f"{callback.from_user.id} could not edit task({task_id}): {ex}")
         return
+
+
+@user.callback_query(F.data == "_")
+async def callback_placeholder(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
