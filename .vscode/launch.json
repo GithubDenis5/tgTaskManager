@@ -16,6 +16,14 @@
             "module": "task_service",
             "envFile": "${workspaceFolder}/task_service/.env",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python Debugger: Notification_service",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "notification_service",
+            "envFile": "${workspaceFolder}/notification_service/.env",
+            "console": "integratedTerminal"
         }
     ]
 }
