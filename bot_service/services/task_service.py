@@ -10,10 +10,8 @@ logger = setup_logger(__name__)
 
 async def parse_tasks_to_list(input_str):
     try:
-        # Попробуйте распарсить как JSON без изменений
         return json.loads(input_str)
     except json.JSONDecodeError:
-        # Если не получается, попробуйте заменить кавычки
         fixed_str = input_str.replace("'", '"')
         return json.loads(fixed_str)
 
@@ -61,10 +59,8 @@ async def add_task(tg_id: int, name: str, description: str, deadline: str, notif
         notification (str): дата напоминания
     """
 
-    # Формируем сообщение
     message = ADD_TASK_MQ.format(tg_id, name, description, deadline, notification)
 
-    # Отправляем сообщение и ждем ответ
     response = await rabbitmq.send_message("task_queue", message)
 
     logger.debug(f"add_task answer: {response}")

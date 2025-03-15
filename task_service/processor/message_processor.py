@@ -7,13 +7,6 @@ import task_service.processor.requests_processor as rp
 
 logger = setup_logger(__name__)
 
-"""
-ADD_TASK_MQ = "add_task|tg_id|name|description|deadline|notification"
-GET_TASK_BY_ID_MQ = "get_task|tg_id|task_id"
-EDIT_TASK_MQ = "edit_task|tg_id|task_id|field|deadline|notification"
-message = "get_tasks|{tg_id}"
-"""
-
 
 async def process_request(request: str):
     request_function = request.split("|")[0]
@@ -48,7 +41,6 @@ async def process_message(message: aio_pika.IncomingMessage):
 
         response = str(await process_request(request))
 
-        # Отправляем ответ в `reply_to` с `correlation_id`
         # connection = await aio_pika.connect_robust("amqp://localhost/")
         connection = await aio_pika.connect_robust(os.getenv("RABBITMQ_URL"))
         async with connection:
@@ -58,7 +50,6 @@ async def process_message(message: aio_pika.IncomingMessage):
                     body=response.encode(),
                     correlation_id=message.correlation_id,  # Возвращаем тот же ID
                 ),
-                routing_key=message.reply_to,  # Отправляем в указанную очередь
+                routing_key=message.reply_to,
             )
             logger.debug(f"send to user: {response}")
-            # print(f" [x] Отправлен ответ: {response}")

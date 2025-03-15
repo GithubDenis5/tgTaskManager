@@ -16,8 +16,7 @@ async def main():
         queue = await channel.declare_queue("task_queue", durable=True)
 
         await queue.consume(process_message)
-        # print(" [*] Ожидание сообщений...")
-        await asyncio.Future()  # Бесконечный цикл
+        await asyncio.Future()
 
 
 if __name__ == "__main__":
