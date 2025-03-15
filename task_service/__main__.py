@@ -1,7 +1,7 @@
 import asyncio
 import aio_pika
-from task_service.processor.message_processor import process_message
-from task_service.processor.requests_processor import init_db
+from task_service.services.bot_service import process_message
+from task_service.requests_processor import init_db
 from task_service.logger import setup_logger
 import os
 

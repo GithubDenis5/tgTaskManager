@@ -3,7 +3,7 @@ import os
 import aio_pika
 
 from task_service.logger import setup_logger
-import task_service.processor.requests_processor as rp
+import task_service.requests_processor as rp
 
 logger = setup_logger(__name__)
 
@@ -31,7 +31,7 @@ async def process_request(request: str):
         case "add_user":
             return await rp.add_user(tg_id)
 
-    return f"Шаблонный ответ на: {request}"
+    return 0
 
 
 async def process_message(message: aio_pika.IncomingMessage):
