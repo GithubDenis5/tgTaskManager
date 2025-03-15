@@ -4,6 +4,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime
 from bson import ObjectId
 import uuid
+from task_service.services.notification_service import publish_task_update
+
 
 logger = setup_logger(__name__)
 
@@ -71,6 +73,8 @@ async def add_new_task_from_user(
             }
         )
 
+        await publish_task_update("add_new", task_id, tg_id, notify_dt)
+
         return "0"
     except Exception as e:
         logger.error(f"Ошибка создания задачи: {str(e)}")
@@ -114,6 +118,9 @@ async def edit_task_by_task_id(
                         }
                     },
                 )
+
+                await publish_task_update("edit", task_id, tg_id, notify_dt)
+
                 return "0" if result.modified_count else "1"
 
             case "complete":
@@ -126,10 +133,16 @@ async def edit_task_by_task_id(
                         }
                     },
                 )
+
+                await publish_task_update("complete", task_id, tg_id)
+
                 return "0" if result.modified_count else "1"
 
             case "delete":
                 result = await tasks_collection.delete_one({"tg_id": tg_id, "task_id": task_id})
+
+                await publish_task_update("add_new", task_id, tg_id)
+
                 return "0" if result.deleted_count else "1"
 
             case _:

@@ -22,7 +22,13 @@ async def publish_task_update(
     connection = await aio_pika.connect_robust(rabbitmq_url)
     async with connection:
         channel = await connection.channel()
+
+        queue = await channel.declare_queue("task_updates_queue", durable=True)
+
         await channel.default_exchange.publish(
-            aio_pika.Message(body=message.encode(), content_type="text/plain"),
-            routing_key="task_updates_queue",
+            aio_pika.Message(
+                body=message.encode(),
+                content_type="text/plain",
+            ),
+            routing_key=queue.name,
         )
