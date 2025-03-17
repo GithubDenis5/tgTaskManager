@@ -35,7 +35,6 @@ async def process_request(request: str):
 
 
 async def process_message(message: aio_pika.IncomingMessage):
-    """Обработка входящего сообщения и отправка ответа"""
     async with message.process():
         request = message.body.decode()
 

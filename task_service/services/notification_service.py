@@ -5,14 +5,6 @@ import aio_pika
 async def publish_task_update(
     event: str, task_id: str, tg_id: str, notification_time: str | None = None
 ):
-    """
-    Публикует сообщение о статусе задачи в очередь `task_updates_queue`.
-
-    :param event: Тип события (task_created, task_updated, task_deleted, task_completed).
-    :param task_id: Уникальный идентификатор задачи.
-    :param user_id: ID пользователя, связанного с задачей.
-    :param notification_time: Время уведомления (только для `task_created` и `task_updated`).
-    """
     rabbitmq_url = os.getenv("RABBITMQ_URL", "amqp://guest:guest@localhost/")
 
     message = f"{event}|{task_id}|{tg_id}"

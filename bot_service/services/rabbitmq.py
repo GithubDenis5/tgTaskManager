@@ -10,7 +10,6 @@ class RabbitMQ:
         self.responses = {}
 
     async def send_message(self, queue_name: str, message: str) -> str:
-        """Отправляет сообщение и ожидает ответ с тем же correlation_id"""
         connection = await aio_pika.connect_robust(self.rabbitmq_url)
         channel = await connection.channel()
 
@@ -37,7 +36,6 @@ class RabbitMQ:
             await connection.close()
 
     async def _on_response(self, message: aio_pika.IncomingMessage):
-        """Обрабатывает ответ и подтверждает получение"""
         async with message.process():
             correlation_id = message.correlation_id
             if correlation_id in self.responses:
@@ -45,5 +43,4 @@ class RabbitMQ:
                 future.set_result(message.body.decode())
 
 
-# Глобальный клиент RabbitMQ
 rabbitmq = RabbitMQ(os.getenv("RABBITMQ_URL"))

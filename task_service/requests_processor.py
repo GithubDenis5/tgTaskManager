@@ -53,7 +53,7 @@ async def add_new_task_from_user(
         user = await users_collection.find_one({"tg_id": tg_id})
         if not user:
             await users_collection.insert_one(
-                {"tg_id": tg_id, "created_at": datetime.utcnow().isoformat()}
+                {"tg_id": tg_id, "created_at": datetime.now().isoformat()}
             )
 
         deadline_dt = datetime.fromisoformat(deadline)
@@ -69,7 +69,7 @@ async def add_new_task_from_user(
                 "description": description,
                 "deadline": deadline_dt,
                 "notification": notify_dt,
-                "created_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.now().isoformat(),
             }
         )
 
@@ -77,7 +77,7 @@ async def add_new_task_from_user(
 
         return "0"
     except Exception as e:
-        logger.error(f"Ошибка создания задачи: {str(e)}")
+        logger.error(f"error in task creating: {str(e)}")
         return "1"
 
 
@@ -95,7 +95,7 @@ async def get_task_by_task_id(tg_id: str, task_id: str):
         else:
             return {}
     except Exception as e:
-        logger.error(f"Ошибка получения задачи: {str(e)}")
+        logger.error(f"error in get task: {str(e)}")
         return {}
 
 
@@ -114,7 +114,7 @@ async def edit_task_by_task_id(
                         "$set": {
                             "deadline": deadline_dt,
                             "notification": notify_dt,
-                            "updated_at": datetime.utcnow().isoformat(),
+                            "updated_at": datetime.now().isoformat(),
                         }
                     },
                 )
@@ -129,7 +129,7 @@ async def edit_task_by_task_id(
                     {
                         "$set": {
                             "is_completed": True,
-                            "completed_at": datetime.utcnow().isoformat(),
+                            "completed_at": datetime.now().isoformat(),
                         }
                     },
                 )
@@ -141,7 +141,7 @@ async def edit_task_by_task_id(
             case "delete":
                 result = await tasks_collection.delete_one({"tg_id": tg_id, "task_id": task_id})
 
-                await publish_task_update("add_new", task_id, tg_id)
+                await publish_task_update("delete", task_id, tg_id)
 
                 return "0" if result.deleted_count else "1"
 
@@ -150,11 +150,7 @@ async def edit_task_by_task_id(
                 return "1"
 
     except Exception as e:
-        logger.error(f"Ошибка редактирования задачи: {str(e)}")
-        return "1"
-
-    except Exception as e:
-        logger.error(f"Ошибка редактирования: {e}")
+        logger.error(f"editing error: {e}")
         return "1"
 
 
@@ -164,8 +160,10 @@ async def add_user(tg_id: str) -> str:
         if user:
             return "0"
 
-        await users_collection.insert_one({"tg_id": tg_id, "created_at": datetime.isoformat()})
+        await users_collection.insert_one(
+            {"tg_id": tg_id, "created_at": datetime.now().isoformat()}
+        )
         return "0"
     except Exception as e:
-        logger.error(f"Ошибка добавления пользователя: {e}")
+        logger.error(f"error in user adding: {e}")
         return "1"
