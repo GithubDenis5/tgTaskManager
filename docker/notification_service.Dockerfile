@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-WORKDIR /task_service
+WORKDIR /notification_service
 
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir poetry==1.8.3 \
 
 COPY . .
 
-ENTRYPOINT ["python3", "-u", "-B", "-m", "task_service"]
+ENTRYPOINT ["python3", "-u", "-B", "-m", "notification_service"]
