@@ -32,7 +32,7 @@ async def init_db():
 async def get_tasks_by_id(tg_id: str):
     try:
         tasks = await tasks_collection.find(
-            {"tg_id": tg_id, "is_completed": {"$ne": True}},  # Только невыполненные
+            {"tg_id": tg_id, "is_completed": {"$ne": True}},
             {"_id": 0, "created_at": 0},
         ).to_list(length=None)
 

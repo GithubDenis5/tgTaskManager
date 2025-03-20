@@ -17,4 +17,4 @@ async def handle_notification(task_id: str, tg_id: str, notification_time: str):
     if delay > 0:
         await asyncio.sleep(delay)
 
-    await send_notification(tg_id, f"notify|{task_id}")
+    await send_notification(tg_id, task_id)

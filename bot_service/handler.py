@@ -128,7 +128,10 @@ async def task_adding_show_fields(message: Message, state: FSMContext):
         return
 
     text = messages.CONFIRM_TASK_ADDING + messages.TASK_INFO_FORMATER.format(
-        name, description, deadline_date, deadline_time, notification_date, notification_time
+        name,
+        description,
+        deadline_date + " " + deadline_time,
+        notification_date + " " + notification_time,
     )
 
     await message.answer(text=text, reply_markup=keyboards.confirm_task_adding)

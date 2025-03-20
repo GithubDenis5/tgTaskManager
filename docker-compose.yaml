@@ -10,6 +10,9 @@ services:
       - bot_service/.env
     volumes:
       - .:/bot_service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     restart: always
 
   rabbitmq:
@@ -25,6 +28,11 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   task_service:
     build:
@@ -36,8 +44,7 @@ services:
     volumes:
       - .:/task_service
     depends_on:
-      rabbitmq:
-        condition: service_started
+      - bot_service
     restart: always
 
   notification_service:
