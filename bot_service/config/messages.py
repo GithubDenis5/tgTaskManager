@@ -3,7 +3,7 @@ START_MESSAGE = "<b>Привет</b>, это бот для управления 
 ACTION_DENIED = "Действие отменено"
 ACTION_CONFIRM = "Подтвердить действие?"
 
-TASK_FOR_LIST_FORMATER = "<b>{}</b> | <i>{}</i>\n\n"
+TASK_FOR_LIST_FORMATTER = "<b>{}</b> | <i>{}</i> | ⏳ {}\n\n"
 TASK_INFO_FORMATER = "<b>{}</b>\n<i>{}</i>\nДедлайн: {}\nНапоминание: {}"
 
 ENTER_TASK_NAME = "Введите название задачи"
@@ -21,6 +21,9 @@ ENTER_NEW_DEADLINE_DATE = "Введите новую дату дедлайна"
 ENTER_NEW_DEADLINE_TIME = "Введите новое время дедлайна"
 ENTER_NEW_NOTIFICATION_DATE = "Введите новую дату напоминания"
 ENTER_NEW_NOTIFICATION_TIME = "Введите новое время напоминания"
+ENTER_NEW_NAME = "Введите новое название задачи"
+ENTER_NEW_DESCRIPTION = "Ввидите новое описание задачи"
+CONFIRM_NEW_TEXT = "Применить изменения?\n{} -> {}\n{} -> {}"
 TASK_UPDATED = "Задача обновлена"
 TASK_AFTER_EDIT = "Задача после обновления\n"
 NEW_TIME = "Дедлайн: {} {}\nНапоминание:{} {}"

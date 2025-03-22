@@ -15,3 +15,8 @@ class Prolong(StatesGroup):
     deadline_time = State()
     notification_date = State()
     notification_time = State()
+
+
+class EditText(StatesGroup):
+    name = State()
+    description = State()

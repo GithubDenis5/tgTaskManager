@@ -167,3 +167,23 @@ async def add_user(tg_id: str) -> str:
     except Exception as e:
         logger.error(f"error in user adding: {e}")
         return "1"
+
+
+async def edit_task_text_by_task_id(tg_id: str, task_id, name: str, description: str):
+    try:
+        result = await tasks_collection.update_one(
+            {"tg_id": tg_id, "task_id": task_id},
+            {
+                "$set": {
+                    "name": name,
+                    "description": description,
+                    "updated_at": datetime.now().isoformat(),
+                }
+            },
+        )
+
+        return "0" if result.modified_count else "1"
+
+    except Exception as e:
+        logger.error(f"error in text editing: {e}")
+        return "1"

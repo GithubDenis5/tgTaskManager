@@ -1,5 +1,10 @@
 from bot_service.services.rabbitmq import rabbitmq
-from bot_service.services.utils import ADD_TASK_MQ, GET_TASK_BY_ID_MQ, EDIT_TASK_MQ
+from bot_service.services.utils import (
+    ADD_TASK_MQ,
+    GET_TASK_BY_ID_MQ,
+    EDIT_TASK_MQ,
+    EDIT_TASK_TEXT_MQ,
+)
 
 from bot_service.logger import setup_logger
 
@@ -58,3 +63,11 @@ async def edit_task(tg_id, task_id, field, deadline, notification):
     response = await rabbitmq.send_message("task_queue", message)
 
     logger.debug(f"edit_task field-{field} answer: {response}")
+
+
+async def edit_task_text(tg_id: str, task_id: str, name: str, description: str):
+    message = EDIT_TASK_TEXT_MQ.format(tg_id, task_id, name, description)
+
+    response = await rabbitmq.send_message("task_queue", message)
+
+    logger.debug(f"edit_task_text {name}:{description} answer: {response}")

@@ -91,6 +91,12 @@ async def task_info_keyboard(task_id: str, back_page: int):
 
     keyboard.row(
         InlineKeyboardButton(
+            text=labels.EDIT_TEXT, callback_data=f"edit_task_text_{task_id}_{back_page}"
+        )
+    )
+
+    keyboard.row(
+        InlineKeyboardButton(
             text=labels.DELETE, callback_data=f"edit_task_delete_{task_id}_{back_page}"
         )
     )
@@ -107,6 +113,17 @@ async def task_edit_confirm(task_id: str, field: str, back_page: int):
         InlineKeyboardButton(
             text=labels.YES, callback_data=f"confirm_edit_task_{field}_{task_id}"
         ),
+        InlineKeyboardButton(text=labels.NO, callback_data=f"task_{task_id}_{back_page}"),
+    )
+
+    return keyboard.as_markup()
+
+
+async def task_edit_text_confirm(task_id: str, back_page: int = 0):
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.row(
+        InlineKeyboardButton(text=labels.YES, callback_data=f"confirm_edit_text_{task_id}"),
         InlineKeyboardButton(text=labels.NO, callback_data=f"task_{task_id}_{back_page}"),
     )
 

@@ -203,15 +203,66 @@ async def edit_task_confirm(callback: CallbackQuery, state: FSMContext):
 
     _, _, field, task_id, back_page = callback.data.split("_")
 
-    if field != "prolong":
+    if field != "prolong" and field != "text":
         kb = await keyboards.task_edit_confirm(task_id=task_id, field=field, back_page=back_page)
         await callback.message.edit_text(text=messages.ACTION_CONFIRM, reply_markup=kb)
         return
+    elif field == "text":
+        await callback.message.edit_text(text=messages.ENTER_NEW_NAME, reply_markup=None)
+        await state.clear()
+        await state.update_data(task_id=task_id)
+        await state.set_state(states.EditText.name)
     else:
         await callback.message.edit_text(text=messages.ENTER_NEW_DEADLINE_DATE, reply_markup=None)
         await state.clear()
         await state.update_data(task_id=task_id)
         await state.set_state(states.Prolong.deadline_date)
+
+
+@user.message(states.EditText.name)
+async def task_edit_text_name(message: Message, state: FSMContext):
+    await state.update_data(name=message.text)
+    await message.answer(text=messages.ENTER_NEW_DESCRIPTION)
+    await state.set_state(states.EditText.description)
+
+
+@user.message(states.EditText.description)
+async def task_edit_text_description(message: Message, state: FSMContext):
+    await state.update_data(description=message.text)
+
+    data = await state.get_data()
+    task_id = data["task_id"]
+    name = data["name"]
+    description = data["description"]
+
+    task = await task_service.get_task(message.from_user.id, task_id)
+
+    text = messages.CONFIRM_NEW_TEXT.format(task["name"], name, task["description"], description)
+
+    kb = await keyboards.task_edit_text_confirm(task_id)
+    await message.answer(text=text, reply_markup=kb)
+
+
+@user.callback_query(F.data.startswith("confirm_edit_text_"))
+async def confirm_task_edit_text(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+
+    data = await state.get_data()
+    task_id = data["task_id"]
+    name = data["name"]
+    description = data["description"]
+
+    await task_service.edit_task_text(str(callback.from_user.id), task_id, name, description)
+
+    await callback.message.edit_text(text=messages.TASK_UPDATED, reply_markup=None)
+    logger.debug(f"user {callback.from_user.id} ask tasks list")
+    await state.clear()
+
+    tasks = await task_service.get_tasks(callback.from_user.id)
+
+    text = await formaters.format_tasks_list(tasks)
+
+    await callback.message.answer(text=text, reply_markup=keyboards.under_tasks_list_keyboard)
 
 
 @user.message(states.Prolong.deadline_date)

@@ -30,6 +30,9 @@ async def process_request(request: str):
             return await rp.get_tasks_by_id(tg_id)
         case "add_user":
             return await rp.add_user(tg_id)
+        case "edit_task_text":
+            _, _, task_id, name, description = request.split("|")
+            return await rp.edit_task_text_by_task_id(tg_id, task_id, name, description)
 
     return 0
 
