@@ -1,11 +1,33 @@
 from bot_service.config import messages
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def format_datetime(iso_str: str) -> str:
-    """Преобразует строку в ISO формате в формат 'дд.мм.гггг чч:мм'."""
     dt = datetime.fromisoformat(iso_str)
     return dt.strftime("%d.%m.%Y %H:%M")
+
+
+def get_time_left(deadline: str) -> str:
+    deadline_dt = datetime.fromisoformat(deadline)
+    now = datetime.now()
+    delta: timedelta = deadline_dt - now
+
+    if delta.total_seconds() <= 0:
+        return "Просрочено"
+
+    days, remainder = divmod(delta.total_seconds(), 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, _ = divmod(remainder, 60)
+
+    parts = []
+    if days:
+        parts.append(f"{int(days)} д.")
+    if hours:
+        parts.append(f"{int(hours)} ч.")
+    if minutes or not parts:
+        parts.append(f"{int(minutes)} мин.")
+
+    return " ".join(parts)
 
 
 async def format_tasks_list(tasks: list):
@@ -13,9 +35,10 @@ async def format_tasks_list(tasks: list):
         return "✅ У вас нет активных задач!"
 
     return "".join(
-        messages.TASK_FOR_LIST_FORMATER.format(
+        messages.TASK_FOR_LIST_FORMATTER.format(
             task["name"],
             format_datetime(task["deadline"]),
+            get_time_left(task["deadline"]),
         )
         for task in tasks
     ).strip()

@@ -2,6 +2,9 @@ FROM python:3.11-slim
 
 WORKDIR /bot_service
 
+ENV TZ=Europe/Moscow
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 COPY pyproject.toml poetry.lock* ./
 
 RUN python -m pip install --no-cache-dir poetry==1.8.3 \
