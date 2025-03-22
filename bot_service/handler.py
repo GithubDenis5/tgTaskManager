@@ -11,6 +11,8 @@ from bot_service.config import messages, labels, states
 
 from bot_service.services import task_service
 from bot_service.utils import formaters
+from datetime import datetime
+
 
 logger = setup_logger(__name__)
 
@@ -50,6 +52,72 @@ async def show_task_list_message(message: Message, state: FSMContext):
     text = await formaters.format_tasks_list(tasks)
 
     await message.answer(text=text, reply_markup=keyboards.under_tasks_list_keyboard)
+
+
+@user.callback_query(F.data == "enter_date_to_delete")
+async def delete_by_date(callback: CallbackQuery, state: FSMContext):
+    logger.debug(f"user {callback.from_user.id} asd date to enter")
+    await state.clear()
+
+    await state.set_state(states.DateToDelete.date)
+    await callback.message.edit_text(text=messages.ENTER_DATE_TO_DELETE, reply_markup=None)
+
+
+@user.message(states.DateToDelete.date)
+async def enter_date_to_delete(message: Message, state: FSMContext):
+    try:
+        date_iso = datetime.strptime(message.text, "%d.%m.%Y").strftime("%Y-%m-%d")
+    except Exception as e:
+        logger.debug(e)
+        await message.answer(text=messages.DATETIME_FORMAT_ERROR)
+
+        await state.clear()
+        await state.set_state(states.DateToDelete.date)
+        await message.answer(text=messages.ENTER_DATE_TO_DELETE, reply_markup=None)
+
+        return
+
+    await state.update_data(date=message.text)
+
+    tasks = await task_service.get_tasks(message.from_user.id)
+    tasks_by_date = await formaters.get_tasks_by_date(tasks, date_iso)
+
+    if tasks_by_date == []:
+        await message.answer(
+            text=messages.TASK_LIST_BY_DATE_EMPTY, reply_markup=keyboards.alltime_reply_keyboard
+        )
+        return
+
+    formated_tasks_by_date = await formaters.format_tasks_list(tasks_by_date)
+
+    text = messages.TASKS_TO_DELETE.format(formated_tasks_by_date)
+
+    await message.answer(text=text, reply_markup=keyboards.confirm_delete_by_date_kb)
+
+
+@user.callback_query(F.data == "delete_by_date")
+async def confirm_delete_by_date(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    data = await state.get_data()
+
+    logger.debug(data)
+
+    date_iso = datetime.strptime(data["date"], "%d.%m.%Y").strftime("%Y-%m-%d")
+
+    tasks = await task_service.get_tasks(callback.from_user.id)
+    tasks_by_date = await formaters.get_tasks_by_date(tasks, date_iso)
+
+    for task in tasks_by_date:
+        await task_service.edit_task(callback.from_user.id, task["task_id"], "delete")
+
+    logger.debug("tasks_deleted")
+
+    await callback.message.edit_reply_markup(reply_markup=None)
+
+    await callback.message.answer(
+        text=messages.TASKS_DELETED, reply_markup=keyboards.alltime_reply_keyboard
+    )
+    await state.clear()
 
 
 @user.callback_query(F.data == "show_tasks_list_message")
@@ -127,7 +195,7 @@ async def task_adding_show_fields(message: Message, state: FSMContext):
             notification=formaters.convert_datetime(notification_date, notification_time)
         )
     except Exception:
-        await message.answer(text=messages.DATETIME_FORMA_ERROR)
+        await message.answer(text=messages.DATETIME_FORMAT_ERROR)
 
         await state.clear()
         await message.answer(text=messages.ENTER_TASK_NAME)
@@ -311,7 +379,7 @@ async def task_edit_show_fields(message: Message, state: FSMContext):
             notification=formaters.convert_datetime(notification_date, notification_time)
         )
     except Exception:
-        await message.answer(text=messages.DATETIME_FORMA_ERROR)
+        await message.answer(text=messages.DATETIME_FORMAT_ERROR)
 
         await message.answer(text=messages.ENTER_NEW_DEADLINE_DATE, reply_markup=None)
         await state.clear()

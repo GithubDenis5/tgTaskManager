@@ -16,12 +16,27 @@ from bot_service.logger import setup_logger
 logger = setup_logger(__name__)
 
 alltime_reply_keyboard = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text=labels.TASK_LIST)], [KeyboardButton(text=labels.ADD_TASK)]]
+    keyboard=[[KeyboardButton(text=labels.TASK_LIST)], [KeyboardButton(text=labels.ADD_TASK)]],
+    resize_keyboard=True,
 )
 
 under_tasks_list_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text=labels.EDIT_TASK_STATUS, callback_data="page_task_1")]
+        [InlineKeyboardButton(text=labels.EDIT_TASK_STATUS, callback_data="page_task_1")],
+        [
+            InlineKeyboardButton(
+                text=labels.DELETE_TASKS_BY_DATE, callback_data="enter_date_to_delete"
+            )
+        ],
+    ]
+)
+
+confirm_delete_by_date_kb = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text=labels.YES, callback_data="delete_by_date"),
+            InlineKeyboardButton(text=labels.NO, callback_data="denie"),
+        ],
     ]
 )
 

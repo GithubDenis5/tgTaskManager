@@ -1,5 +1,6 @@
 from bot_service.config import messages
 from datetime import datetime, timedelta
+from typing import List, Dict
 
 
 def format_datetime(iso_str: str) -> str:
@@ -58,3 +59,7 @@ async def format_task_info(task):
             format_datetime(task["notification"]),
         )
     ).strip()
+
+
+async def get_tasks_by_date(tasks: List[Dict], date_iso: str):
+    return [task for task in tasks if task["deadline"].startswith(date_iso)]

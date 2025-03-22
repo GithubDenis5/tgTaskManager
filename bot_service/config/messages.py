@@ -16,6 +16,7 @@ CONFIRM_TASK_ADDING = "Добавить задачу?\n"
 TASK_ADDED = "Задача добавлена в ваш списов задач"
 
 CHOOSE_TASK = "Выберите задачу для просмотра/редактирования"
+ENTER_DATE_TO_DELETE = "Ввведите дату для удаления задач"
 
 ENTER_NEW_DEADLINE_DATE = "Введите новую дату дедлайна"
 ENTER_NEW_DEADLINE_TIME = "Введите новое время дедлайна"
@@ -29,6 +30,10 @@ TASK_AFTER_EDIT = "Задача после обновления\n"
 NEW_TIME = "Дедлайн: {} {}\nНапоминание:{} {}"
 
 
-DATETIME_FORMA_ERROR = "Некорректо введены ддата/время"
+DATETIME_FORMAT_ERROR = "Некорректо введены ддата/время"
 
 NOTIFICATION = "Получено уведомление о задаче\n"
+
+TASKS_TO_DELETE = "Хотите удалить задачи?\n{}"
+TASKS_DELETED = "Задачи удалены"
+TASK_LIST_BY_DATE_EMPTY = "Нет задач на выбранную дату"

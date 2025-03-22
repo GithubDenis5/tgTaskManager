@@ -57,7 +57,7 @@ async def get_task(tg_id: int, task_id: str):
     return response
 
 
-async def edit_task(tg_id, task_id, field, deadline, notification):
+async def edit_task(tg_id, task_id, field, deadline=None, notification=None):
     message = EDIT_TASK_MQ.format(tg_id, task_id, field, deadline, notification)
 
     response = await rabbitmq.send_message("task_queue", message)

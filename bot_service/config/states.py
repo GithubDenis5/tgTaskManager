@@ -20,3 +20,7 @@ class Prolong(StatesGroup):
 class EditText(StatesGroup):
     name = State()
     description = State()
+
+
+class DateToDelete(StatesGroup):
+    date = State()
