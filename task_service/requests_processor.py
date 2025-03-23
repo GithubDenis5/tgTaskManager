@@ -187,3 +187,21 @@ async def edit_task_text_by_task_id(tg_id: str, task_id, name: str, description:
     except Exception as e:
         logger.error(f"error in text editing: {e}")
         return "1"
+
+
+async def send_restored_notifications():
+    try:
+        current_time = datetime.now()
+        tasks = await tasks_collection.find(
+            {"notification": {"$gt": current_time}},
+            {"_id": 0, "tg_id": 1, "task_id": 1, "notification": 1},
+        ).to_list(length=None)
+
+        for task in tasks:
+            await publish_task_update(
+                "notify", task["task_id"], task["tg_id"], task["notification"]
+            )
+
+        logger.info(f"sent {len(tasks)} restore notifications.")
+    except Exception as e:
+        logger.error(f"error in restore notifications: {e}")
