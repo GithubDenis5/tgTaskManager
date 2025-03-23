@@ -1,13 +1,13 @@
 # tgTaskManager
-TG-Bot для отслеживания задач с напоминаниями 
-## Установка и настройка
+TG-Bot for tracking tasks with reminders
+## Installation and configuration
 1. `git clone https://github.com/GithubDenis5/tgTaskManager.git`
-2. настроить подключение к MongpDB и RabbitMQ через _.env_ файлы в каждом сервисе(bot_service, task_service, notification_service), примеры в _.env.template_
+2. configure connection to MongpDB and RabbitMQ via _.env_ files in each service (bot_service, task_service, notification_service), examples in _.env.template_
 3. `docker compose up --build`
-## Основной функционал
-- Создание задач с напоминаниями
-- Изменение названия, описания, даты и времени дедлайна и напоминания
-- Получение уведомлений в выбранное время 
-- Отслеживание оставшегося срока до дедлайна
-- Удаление задачи на конкретную дату
-- Сохранение отслеживания отправки уведомлений после перезапуска сервисов
+## Main functionality
+- Creating tasks with reminders
+- Changing the name, description, date and time of the deadline and reminder
+- Receiving notifications at the selected time
+- Tracking the remaining time before the deadline
+- Deleting a task on a specific date
+- Saving tracking of sending notifications after restarting services
