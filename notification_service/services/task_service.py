@@ -1,11 +1,9 @@
 import asyncio
 from notification_service.notification_processor import handle_notification
 from task_service.logger import setup_logger
+from notification_service.services.storage import scheduled_notifications
 
 logger = setup_logger(__name__)
-
-
-scheduled_notifications = {}
 
 
 async def process_task_update(message: str):
