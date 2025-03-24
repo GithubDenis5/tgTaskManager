@@ -11,3 +11,4 @@ TG-Bot for tracking tasks with reminders
 - Tracking the remaining time before the deadline
 - Deleting a task on a specific date
 - Saving tracking of sending notifications after restarting services
+- Sending a reminder every day after the delay and before the status changes to completed
